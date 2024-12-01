@@ -17,6 +17,18 @@ let readColumnsFromFile filePath =
 let filePath = "01/input.txt"
 let column1, column2 = readColumnsFromFile filePath
 
+// Part 1
+let sortedList1 = List.sort column1
+let sortedList2 = List.sort column2
+
+let differences = 
+    List.map2 (fun x y -> abs (x - y)) sortedList1 sortedList2
+
+let totalDifference = List.sum differences
+
+printfn "Total Difference: %d" totalDifference
+
+// Part 2
 let countOccurrences number list =
     list |> List.filter (fun x -> x = number) |> List.length
 
