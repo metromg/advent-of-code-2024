@@ -25,7 +25,6 @@ let apply a b operator =
     | Multiply -> a * b
     | Concat -> int64 ((string a) + (string b))
 
-// Part 1
 let possibleOperatorCombinations length possibleOperators =
     List.init length (fun _ -> possibleOperators)
     |> List.fold (fun combinations operators ->
@@ -47,6 +46,7 @@ let testEquation possibleOperators (testValue, values) =
 
     results |> List.contains testValue
 
+// Part 1
 let sumOfValidTestValuesWithAddOrMultiply =
     equations
     |> Array.filter (testEquation [ Add ; Multiply ])
@@ -57,7 +57,7 @@ printfn "Sum of valid test values with add or multiply %i" sumOfValidTestValuesW
 // Part 2
 let sumOfValidTestValuesWithAddMultiplyOrConcat =
     equations
-    |> Array.filter (testEquation [ Add ; Multiply; Concat ])
+    |> Array.filter (testEquation [ Add ; Multiply ; Concat ])
     |> Array.sumBy fst
 
-printfn "Sum of valid tet values with add, multiply or concat %i" sumOfValidTestValuesWithAddMultiplyOrConcat
+printfn "Sum of valid test values with add, multiply or concat %i" sumOfValidTestValuesWithAddMultiplyOrConcat
