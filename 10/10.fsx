@@ -31,7 +31,7 @@ type Mode = Score | Rating
 let exploreTrails mode grid trailHeadPos =
     let rec explore position currentHeight =
         if currentHeight = 9 then
-            [ Some position ]
+            [ position ]
         else
             let nextHeight = currentHeight + 1
             [ Up ; Right ; Down ; Left ]
@@ -40,9 +40,8 @@ let exploreTrails mode grid trailHeadPos =
                 if isInBounds grid nextPos && grid.[fst nextPos, snd nextPos] = nextHeight then
                     explore nextPos nextHeight
                 else
-                    [ None ]
+                    []
             )
-            |> List.filter Option.isSome
 
     explore trailHeadPos 0
     |> (if mode = Score then List.distinct else id)
