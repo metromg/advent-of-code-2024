@@ -39,13 +39,17 @@ let totalCount =
     Map.fold (fun acc _ count -> acc + count) BigInteger.Zero
 
 // Part 1
-stoneToCountMap
-|> applyBlinks 25
-|> totalCount
-|> printfn "Number of stones after 25 times: %A"
+let numberOfStonesAfter25Times =
+    stoneToCountMap
+    |> applyBlinks 25
+    |> totalCount
+
+printfn "Number of stones after 25 times: %A" numberOfStonesAfter25Times
 
 // Part 2
-stoneToCountMap
-|> applyBlinks 75
-|> totalCount
-|> printfn "Number of stones after 75 times: %A"
+let numberOfStonesAfter75Times =
+    stoneToCountMap
+    |> applyBlinks 75
+    |> totalCount
+
+printfn "Number of stones after 75 times: %A" numberOfStonesAfter75Times
