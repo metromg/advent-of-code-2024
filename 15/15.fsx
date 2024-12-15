@@ -70,9 +70,7 @@ let rec move pos dir map =
             | _ -> failwith "Expected BoxLeft or BoxRight"
 
         let connectedBoxPos = getConnectedBoxPos boxPos boxElem
-
-        let (newConnectedBoxPos, updatedMap) = map |> move connectedBoxPos dir
-        attemptMove connectedBoxPos newConnectedBoxPos fallback (fun () ->
+        handleBoxMovement connectedBoxPos map fallback (fun updatedMap ->
             handleBoxMovement boxPos updatedMap fallback next
         )
 
