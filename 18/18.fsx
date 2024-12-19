@@ -1,22 +1,5 @@
 open System.IO
 
-type FifoQueue<'T> = { front: 'T list ; back: 'T list }
-
-module FifoQueue =
-    let empty = { front = [] ; back = [] }
-    let enqueue value queue = { queue with back = value :: queue.back }
-    let dequeue queue =
-        match queue.front, queue.back with
-        | [], [] -> failwith "Queue is empty"
-        | frontHead::frontTail, _ -> frontHead, { queue with front = frontTail }
-        | [], back ->
-            let front = back |> List.rev
-            front.Head, { front = front.Tail ; back = [] }
-    let isEmpty queue =
-        match queue.front, queue.back with
-        | [], [] -> true
-        | _ -> false
-
 let filePath = "18/input.txt"
 let input = File.ReadAllLines(filePath)
 
@@ -46,22 +29,22 @@ let gridFromCoordinates width height coordinates =
 let findShortestDistance startPos endPos grid =
     let positionWithDistance =
         Seq.unfold (fun (queue, visited) ->
-            if queue |> FifoQueue.isEmpty then
-                None
-            else
-                let ((x, y), currentDistance), poppedQueue = queue |> FifoQueue.dequeue
+            match queue with
+            | [] -> None
+            | ((x, y), currentDistance) :: poppedQueue ->
                 let unvisitedSafeNeighbors =
                     [(x + 1, y) ; (x - 1, y) ; (x, y + 1) ; (x, y - 1)]
                     |> List.filter (fun n -> grid |> isInBounds n)
                     |> List.filter (fun (nx, ny) -> grid.[nx, ny] = Safe)
                     |> List.filter (fun n -> not (visited |> Set.contains n))
 
-                let newQueue = unvisitedSafeNeighbors |> List.fold (fun queue n -> queue |> FifoQueue.enqueue (n, currentDistance + 1)) poppedQueue
+                let newQueue = unvisitedSafeNeighbors |> List.fold (fun queue n -> queue @ [(n, currentDistance + 1)]) poppedQueue
                 let newVisited = unvisitedSafeNeighbors |> List.fold (fun visited n -> visited |> Set.add n) visited
 
                 Some(((x, y), currentDistance), (newQueue, newVisited))
-        ) ((FifoQueue.empty |> FifoQueue.enqueue ((startPos, 0))), Set([startPos]))
+        ) ([(startPos, 0)], Set([startPos]))
         |> Seq.tryFind (fun (pos, _) -> pos = endPos)
+        
     match positionWithDistance with
     | Some (_, distance) -> Some distance
     | None -> None
