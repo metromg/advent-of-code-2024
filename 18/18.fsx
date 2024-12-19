@@ -68,7 +68,7 @@ let findShortestDistance startPos endPos grid =
 
 // Part 1
 let shortestDistance =
-    (coordinates |> Array.take 2881)
+    (coordinates |> Array.take 1024)
     |> gridFromCoordinates size size
     |> findShortestDistance startPos endPos
 
