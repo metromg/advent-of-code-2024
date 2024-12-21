@@ -105,7 +105,7 @@ let possibleDirectionalSeqsForNumericKeypad keypad possibleKeypadSeqs sourceSeq 
     |> cartesianProduct
     |> List.map (fun possibility -> List.concat possibility)
 
-let shortestLengthOfSeqInDepth keypad keypadSeqs (keypadSeqLengths: Map<(int * int) * (int * int), int64>) depth cache seq =
+let shortestLengthOfSeqInDepth keypad keypadSeqs keypadSeqLengths depth cache seq =
     let rec compute depth cache seq =
         if cache |> Map.containsKey (depth, seq) then
             cache |> Map.find (depth, seq), cache
@@ -145,21 +145,21 @@ let shortestLengthOfSeqInDepth keypad keypadSeqs (keypadSeqLengths: Map<(int * i
 
     compute depth cache seq
 
-let lengthOfShortestDirectionalSeqThroughKeypadChain numericPad possibleNumericPadSeqs directionalPad (possibleDirectionalPadSeqs: Map<(int * int) * (int * int), DirectionalButton list list>) depth numericCode =
-    let directionalPadSeqLengths = possibleDirectionalPadSeqs |> Map.map (fun _ possibleSeqs -> int64 (possibleSeqs.[0] |> List.length))
+let lengthOfShortestDirectionalSeqThroughKeypadChain numericPad numericPadSeqs directionalPad (directionalPadSeqs: Map<(int * int) * (int * int), DirectionalButton list list>) depth numericCode =
+    let directionalPadSeqLengths = directionalPadSeqs |> Map.map (fun _ possibleSeqs -> int64 (possibleSeqs.[0] |> List.length))
     ActivateNumeric :: parseNumericSeq numericCode
-    |> possibleDirectionalSeqsForNumericKeypad numericPad possibleNumericPadSeqs
+    |> possibleDirectionalSeqsForNumericKeypad numericPad numericPadSeqs
     |> List.fold (fun (results, cache) seq ->
-        let result, newCache = shortestLengthOfSeqInDepth directionalPad possibleDirectionalPadSeqs directionalPadSeqLengths depth cache seq
+        let result, newCache = shortestLengthOfSeqInDepth directionalPad directionalPadSeqs directionalPadSeqLengths depth cache seq
         result :: results, newCache
     ) ([], Map.empty)
     |> fst
     |> List.min
 
-let calculateTotalComplexities numericPad possibleNumericPadSeqs directionalPad possibleDirectionalPadSeqs depth numericCodes =
+let calculateTotalComplexities numericPad numericPadSeqs directionalPad directionalPadSeqs depth numericCodes =
     numericCodes
     |> Seq.map (fun numericCode ->
-        let directionalSeqLength = lengthOfShortestDirectionalSeqThroughKeypadChain numericPad possibleNumericPadSeqs directionalPad possibleDirectionalPadSeqs depth numericCode
+        let directionalSeqLength = lengthOfShortestDirectionalSeqThroughKeypadChain numericPad numericPadSeqs directionalPad directionalPadSeqs depth numericCode
         let numericPart = int64 (numericCode.Substring(0, numericCode.Length - 1))
         directionalSeqLength * numericPart
     )
