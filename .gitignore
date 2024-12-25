@@ -1,5 +1,2 @@
-#Paket dependency manager
-paket-files/
-
 # Advent of Code inputs
 **/**/input.txt
